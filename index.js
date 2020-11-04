@@ -1,7 +1,9 @@
 const express = require('express');
-const app = express();
 const mysql = require('mysql');
 const fetch = require("node-fetch");
+
+const app = express();
+
 app.set("view engine", "ejs");
 app.use(express.static("public"));
 
@@ -17,16 +19,13 @@ app.get("/search", function(req, res) {
 
 //use this function to retrieve data from the SQL database
 async function getData(sql, params) {
-
   return new Promise(function(resolve, reject) {
     let conn = dbConnection();
-
     conn.query(sql, params, function(err, rows, fields) {
       if (err) throw err;
       resolve(rows);
     });
   });
-
 }
 
 //database
