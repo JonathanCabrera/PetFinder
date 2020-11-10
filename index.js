@@ -12,6 +12,16 @@ app.get('/', function(req, res) {
   res.render('home');
 });
 
+//home route for login
+app.post('/', function(req, res) {
+  res.render('home');
+});
+
+//login route
+app.get('/login', function(req, res) {
+  res.render('login');
+});
+
 //search route
 app.get("/search", function(req, res) {
   res.render('results');
