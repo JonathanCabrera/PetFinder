@@ -5,9 +5,41 @@ const fetch = require("node-fetch");
 app.set("view engine", "ejs");
 app.use(express.static("public"));
 
+// const { Curl } = require('node-libcurl');
+
+// const curl = new Curl();
+
+// curl.setOpt('URL', 'www.google.com');
+// curl.setOpt('FOLLOWLOCATION', true);
+
+// curl.on('end', function (statusCode, data, headers) {
+//   console.info(statusCode);
+//   console.info('---');
+//   console.info(data.length);
+//   console.info('---');
+//   console.info(this.getInfo( 'TOTAL_TIME'));
+//   console.log(data);
+  
+//   this.close();
+// });
+
+// curl.on('error', curl.close.bind(curl));
+// curl.perform();
+
+
 //home route
 app.get('/', function(req, res) {
   res.render('home');
+});
+
+//login route
+app.get("/login", function(req, res) {
+  res.render('login');
+});
+
+//register route
+app.get("/register", function(req, res) {
+  res.render('register');
 });
 
 //search route
@@ -15,8 +47,10 @@ app.get("/search", function(req, res) {
   res.render('results');
 });
 
+
+
 //use this function to retrieve data from the SQL database
-async function getData(sql, params) {
+async function executeSQL(sql, params) {
 
   return new Promise(function(resolve, reject) {
     let conn = dbConnection();
@@ -26,7 +60,6 @@ async function getData(sql, params) {
       resolve(rows);
     });
   });
-
 }
 
 //database
