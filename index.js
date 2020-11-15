@@ -1,7 +1,9 @@
 const express = require('express');
-const app = express();
 const mysql = require('mysql');
 const fetch = require("node-fetch");
+
+const app = express();
+
 app.set("view engine", "ejs");
 app.use(express.static("public"));
 
@@ -19,7 +21,7 @@ app.use(express.static("public"));
 //   console.info('---');
 //   console.info(this.getInfo( 'TOTAL_TIME'));
 //   console.log(data);
-  
+
 //   this.close();
 // });
 
@@ -29,6 +31,11 @@ app.use(express.static("public"));
 
 //home route
 app.get('/', function(req, res) {
+  res.render('home');
+});
+
+
+app.post('/', function(req, res) {
   res.render('home');
 });
 
@@ -54,7 +61,6 @@ async function executeSQL(sql, params) {
 
   return new Promise(function(resolve, reject) {
     let conn = dbConnection();
-
     conn.query(sql, params, function(err, rows, fields) {
       if (err) throw err;
       resolve(rows);
