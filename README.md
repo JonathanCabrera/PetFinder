@@ -1,5 +1,7 @@
-#Pet Finder
+@title: Pet Finder
 
-Hello, this is Jonathan Cabrera.
+@authors: Kyle Jackson, Jonathan Cabrera, Efrain Pamatz, Edgar Licup
 
-Hello, this is Edgar Licup
+@description: This application allows users to search a database of all animal shelters in the US
+for a pet of their choice.
+
