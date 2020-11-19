@@ -28,16 +28,18 @@ app.use(express.static("public"));
 // curl.on('error', curl.close.bind(curl));
 // curl.perform();
 
-
 //home route
 app.get('/', function(req, res) {
   res.render('home');
 });
 
+//home route
+// app.post('/', async function(req, res) {
+//   res.render('home');
+// });
+var loginRouter = require('./routes/login');
 
-app.post('/', function(req, res) {
-  res.render('home');
-});
+
 
 //login route
 app.get("/login", function(req, res) {
@@ -54,11 +56,13 @@ app.get("/search", function(req, res) {
   res.render('results');
 });
 
-
+//adoption route
+app.get("/adoption", function(req, res) {
+  res.render('adoption');
+});
 
 //use this function to retrieve data from the SQL database
 async function executeSQL(sql, params) {
-
   return new Promise(function(resolve, reject) {
     let conn = dbConnection();
     conn.query(sql, params, function(err, rows, fields) {
@@ -72,13 +76,11 @@ async function executeSQL(sql, params) {
 function dbConnection() {
 
   const pool = mysql.createPool({
-
     connectionLimit: 1000,
     host: "wiad5ra41q8129zn.cbetxkdyhwsb.us-east-1.rds.amazonaws.com",
     user: "qf7d0xcoxx04dr6v",
     password: "a0twz7veq2mv2s8a",
     database: "yto45t25jp313qtq"
-
   });
 
   return pool;
