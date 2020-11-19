@@ -1,32 +1,78 @@
 const express = require('express');
 const mysql = require('mysql');
 const fetch = require("node-fetch");
+const https = require('https');
+const axios = require('axios').default;
+//const querystring = require('querystring');
+//const fs = require('fs');
 
 const app = express();
 
 app.set("view engine", "ejs");
 app.use(express.static("public"));
 
-// const { Curl } = require('node-libcurl');
 
-// const curl = new Curl();
+//--------------------------------------------------API post info--------------------------------------------------
 
-// curl.setOpt('URL', 'www.google.com');
-// curl.setOpt('FOLLOWLOCATION', true);
+getApiAuth();
+//getAnimals();
 
-// curl.on('end', function (statusCode, data, headers) {
-//   console.info(statusCode);
-//   console.info('---');
-//   console.info(data.length);
-//   console.info('---');
-//   console.info(this.getInfo( 'TOTAL_TIME'));
-//   console.log(data);
+var tokenType = "";
+var expiresIn = 0;
+var accessToken = "";
 
-//   this.close();
-// });
+async function getApiAuth(){
 
-// curl.on('error', curl.close.bind(curl));
-// curl.perform();
+  
+
+  axios
+    .post('https://api.petfinder.com/v2/oauth2/token', {
+      grant_type: "client_credentials",
+      client_id: "xGuOIWMLc2BR0zFXcMSdMoLPe5dko8hdHm7ncHJqmcVuBA7iHx",
+      client_secret: "1ix8XcU6Ih4GLPwJCRWrVAKCJ2Fu68pyFIbLctvR"
+    })
+    .then((res) => {
+      console.log(`statusCode: ${res.status}`)
+      //console.log(res.data)
+
+      tokenType = res.data.token_type;
+      expiresIn = res.data.expires_in;
+      accessToken = res.data.access_token;
+
+      console.log(`token type: ${tokenType}\nexpires in: ${expiresIn}\naccess token: ${accessToken}`);
+
+      //getAnimals();
+
+    })
+    .catch((error) => {
+      console.error(error)
+    })
+
+}
+
+async function getAnimals() {
+
+  axios
+    .get('https://api.petfinder.com/v2/animals?type=dog&page=2', {
+    params: {
+      Authorization: `Bearer ${accessToken}`
+    }
+  })
+  .then(function (response) {
+    console.log(response);
+  })
+  .catch(function (error) {
+    console.log(error);
+  })
+  .then(function () {
+    // always executed
+  });  
+
+}
+
+
+
+//--------------------------------------------------Routes--------------------------------------------------
 
 //home route
 app.get('/', function(req, res) {
@@ -37,7 +83,8 @@ app.get('/', function(req, res) {
 // app.post('/', async function(req, res) {
 //   res.render('home');
 // });
-var loginRouter = require('./routes/login');
+
+//var loginRouter = require('./routes/login');
 
 //login route
 app.get("/login", function(req, res) {
@@ -54,6 +101,7 @@ app.get("/search", function(req, res) {
   res.render('results');
 });
 
+//--------------------------------------------------SQL database and server start functions--------------------------------------------------
 //adoption route
 app.get("/adoption", function(req, res) {
   res.render('adoption');
