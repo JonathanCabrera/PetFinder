@@ -1,11 +1,12 @@
 const express = require('express');
-const app = express();
 const mysql = require('mysql');
 const fetch = require("node-fetch");
 const https = require('https');
 const axios = require('axios').default;
 //const querystring = require('querystring');
 //const fs = require('fs');
+
+const app = express();
 
 app.set("view engine", "ejs");
 app.use(express.static("public"));
@@ -14,12 +15,15 @@ app.use(express.static("public"));
 //--------------------------------------------------API post info--------------------------------------------------
 
 getApiAuth();
+//getAnimals();
+
+var tokenType = "";
+var expiresIn = 0;
+var accessToken = "";
 
 async function getApiAuth(){
 
-  var tokenType = "";
-  var expiresIn = 0;
-  var accessToken = "";
+  
 
   axios
     .post('https://api.petfinder.com/v2/oauth2/token', {
@@ -37,10 +41,32 @@ async function getApiAuth(){
 
       console.log(`token type: ${tokenType}\nexpires in: ${expiresIn}\naccess token: ${accessToken}`);
 
+      //getAnimals();
+
     })
     .catch((error) => {
       console.error(error)
     })
+
+}
+
+async function getAnimals() {
+
+  axios
+    .get('https://api.petfinder.com/v2/animals?type=dog&page=2', {
+    params: {
+      Authorization: `Bearer ${accessToken}`
+    }
+  })
+  .then(function (response) {
+    console.log(response);
+  })
+  .catch(function (error) {
+    console.log(error);
+  })
+  .then(function () {
+    // always executed
+  });  
 
 }
 
@@ -52,6 +78,13 @@ async function getApiAuth(){
 app.get('/', function(req, res) {
   res.render('home');
 });
+
+//home route
+// app.post('/', async function(req, res) {
+//   res.render('home');
+// });
+
+//var loginRouter = require('./routes/login');
 
 //login route
 app.get("/login", function(req, res) {
@@ -69,13 +102,15 @@ app.get("/search", function(req, res) {
 });
 
 //--------------------------------------------------SQL database and server start functions--------------------------------------------------
+//adoption route
+app.get("/adoption", function(req, res) {
+  res.render('adoption');
+});
 
 //use this function to retrieve data from the SQL database
 async function executeSQL(sql, params) {
-
   return new Promise(function(resolve, reject) {
     let conn = dbConnection();
-
     conn.query(sql, params, function(err, rows, fields) {
       if (err) throw err;
       resolve(rows);
@@ -87,13 +122,11 @@ async function executeSQL(sql, params) {
 function dbConnection() {
 
   const pool = mysql.createPool({
-
     connectionLimit: 1000,
     host: "wiad5ra41q8129zn.cbetxkdyhwsb.us-east-1.rds.amazonaws.com",
     user: "qf7d0xcoxx04dr6v",
     password: "a0twz7veq2mv2s8a",
     database: "yto45t25jp313qtq"
-
   });
 
   return pool;

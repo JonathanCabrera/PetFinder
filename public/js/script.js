@@ -1,5 +1,5 @@
 //----------------------------------------function calls----------------------------------------
-//fetchData("https://api.petfinder.com/v2/?apikey=xGuOIWMLc2BR0zFXcMSdMoLPe5dko8hdHm7ncHJqmcVuBA7iHx");
+
 
 //----------------------------------------functions----------------------------------------
 
