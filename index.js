@@ -1,60 +1,32 @@
 const express = require('express');
-const app = express();
 const mysql = require('mysql');
 const fetch = require("node-fetch");
+
+const app = express();
+
 app.set("view engine", "ejs");
 app.use(express.static("public"));
-
-// const { Curl } = require('node-libcurl');
-
-// const curl = new Curl();
-
-// curl.setOpt('URL', 'www.google.com');
-// curl.setOpt('FOLLOWLOCATION', true);
-
-// curl.on('end', function (statusCode, data, headers) {
-//   console.info(statusCode);
-//   console.info('---');
-//   console.info(data.length);
-//   console.info('---');
-//   console.info(this.getInfo( 'TOTAL_TIME'));
-//   console.log(data);
-  
-//   this.close();
-// });
-
-// curl.on('error', curl.close.bind(curl));
-// curl.perform();
-
 
 //home route
 app.get('/', function(req, res) {
   res.render('home');
 });
 
-//login route
-app.get("/login", function(req, res) {
-  res.render('login');
-});
 
-//register route
-app.get("/register", function(req, res) {
-  res.render('register');
+//login route
+app.get('/login', function(req, res) {
+  res.render('login');
 });
 
 //search route
 app.get("/search", function(req, res) {
-  res.render('results');
+  res.render('search');
 });
 
-
-
 //use this function to retrieve data from the SQL database
-async function executeSQL(sql, params) {
-
+async function getData(sql, params) {
   return new Promise(function(resolve, reject) {
     let conn = dbConnection();
-
     conn.query(sql, params, function(err, rows, fields) {
       if (err) throw err;
       resolve(rows);
@@ -79,6 +51,6 @@ function dbConnection() {
 
 } //dbConnection
 
-app.listen(3000, () => {
-  console.log('server started');
-});
+app.listen(process.env.PORT || 3300, function(){
+    console.log('Server has been started');
+})
