@@ -2,30 +2,51 @@ const express = require('express');
 const app = express();
 const mysql = require('mysql');
 const fetch = require("node-fetch");
+const https = require('https');
+const axios = require('axios').default;
+//const querystring = require('querystring');
+//const fs = require('fs');
+
 app.set("view engine", "ejs");
 app.use(express.static("public"));
 
-// const { Curl } = require('node-libcurl');
 
-// const curl = new Curl();
+//--------------------------------------------------API post info--------------------------------------------------
 
-// curl.setOpt('URL', 'www.google.com');
-// curl.setOpt('FOLLOWLOCATION', true);
+getApiAuth();
 
-// curl.on('end', function (statusCode, data, headers) {
-//   console.info(statusCode);
-//   console.info('---');
-//   console.info(data.length);
-//   console.info('---');
-//   console.info(this.getInfo( 'TOTAL_TIME'));
-//   console.log(data);
-  
-//   this.close();
-// });
+async function getApiAuth(){
 
-// curl.on('error', curl.close.bind(curl));
-// curl.perform();
+  var tokenType = "";
+  var expiresIn = 0;
+  var accessToken = "";
 
+  axios
+    .post('https://api.petfinder.com/v2/oauth2/token', {
+      grant_type: "client_credentials",
+      client_id: "xGuOIWMLc2BR0zFXcMSdMoLPe5dko8hdHm7ncHJqmcVuBA7iHx",
+      client_secret: "1ix8XcU6Ih4GLPwJCRWrVAKCJ2Fu68pyFIbLctvR"
+    })
+    .then((res) => {
+      console.log(`statusCode: ${res.status}`)
+      //console.log(res.data)
+
+      tokenType = res.data.token_type;
+      expiresIn = res.data.expires_in;
+      accessToken = res.data.access_token;
+
+      console.log(`token type: ${tokenType}\nexpires in: ${expiresIn}\naccess token: ${accessToken}`);
+
+    })
+    .catch((error) => {
+      console.error(error)
+    })
+
+}
+
+
+
+//--------------------------------------------------Routes--------------------------------------------------
 
 //home route
 app.get('/', function(req, res) {
@@ -47,7 +68,7 @@ app.get("/search", function(req, res) {
   res.render('results');
 });
 
-
+//--------------------------------------------------SQL database and server start functions--------------------------------------------------
 
 //use this function to retrieve data from the SQL database
 async function executeSQL(sql, params) {
