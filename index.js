@@ -1,7 +1,6 @@
 const express = require('express');
 const mysql = require('mysql');
 const fetch = require("node-fetch");
-
 const app = express();
 
 app.set("view engine", "ejs");
@@ -21,6 +20,16 @@ app.get('/login', function(req, res) {
 //search route
 app.get("/search", function(req, res) {
   res.render('search');
+  $.ajax({
+      url: '/api/search',
+      method: 'POST',
+      data: {
+        zipcode: zipcode,
+        animalType: animalType,
+        gender: gender,
+        age: age,
+        size: size
+      }
 });
 
 //use this function to retrieve data from the SQL database
