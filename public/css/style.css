@@ -13,3 +13,16 @@
     display: inline-block;
     float:none;
 }
+
+.card {
+    width: 384px;
+    height: 512px;
+    margin: 0 auto;
+    text-align: center;
+    background-color: rgb(209, 209, 209);
+  }
+  
+  .form-control {
+    margin: 0 auto;
+    width: 60%;
+  }

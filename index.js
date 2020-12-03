@@ -15,7 +15,6 @@ app.use(express.static("public"));
 //--------------------------------------------------API post info--------------------------------------------------
 
 getApiAuth();
-//getAnimals();
 
 var tokenType = "";
 var expiresIn = 0;
@@ -39,7 +38,7 @@ async function getApiAuth(){
       expiresIn = res.data.expires_in;
       accessToken = res.data.access_token;
 
-      console.log(`token type: ${tokenType}\nexpires in: ${expiresIn}\naccess token: ${accessToken}`);
+      //console.log(`token type: ${tokenType}\nexpires in: ${expiresIn}\naccess token: ${accessToken}`);
 
       //getAnimals();
 
@@ -50,24 +49,22 @@ async function getApiAuth(){
 
 }
 
+
+
 async function getAnimals() {
 
   axios
-    .get('https://api.petfinder.com/v2/animals?type=dog&page=2', {
-    params: {
-      Authorization: `Bearer ${accessToken}`
-    }
-  })
-  .then(function (response) {
-    console.log(response);
-  })
-  .catch(function (error) {
-    console.log(error);
-  })
-  .then(function () {
-    // always executed
-  });  
-
+    .get('https://api.petfinder.com/v2/animals?type=dog', {
+      headers: {
+        Authorization: `Bearer ${accessToken}`
+      }
+    })
+    .then(function (res) {
+      console.log(res.data.animals[0]);
+    })
+    .catch(function (error) {
+      console.log(error);
+    }) 
 }
 
 
@@ -75,14 +72,30 @@ async function getAnimals() {
 //--------------------------------------------------Routes--------------------------------------------------
 
 //home route
-app.get('/', function(req, res) {
-  res.render('home');
-});
+app.get('/', async function(req, res) {
+  let dogs = [];
 
-//home route
-// app.post('/', async function(req, res) {
-//   res.render('home');
-// });
+  getApiAuth();
+
+  axios
+    .get('https://api.petfinder.com/v2/animals?type=dog', {
+      headers: {
+        Authorization: `Bearer ${accessToken}`
+      }
+    })
+    .then(function (response) {
+      dogs = [response.data.animals[0], response.data.animals[1], response.data.animals[2]];
+      console.log(dogs);
+    })
+    .catch(function (error) {
+      console.log(error);
+    })
+
+
+  res.render('home', {
+    "dogs": dogs
+  });
+});
 
 //var loginRouter = require('./routes/login');
 
@@ -101,11 +114,12 @@ app.get("/search", function(req, res) {
   res.render('results');
 });
 
-//--------------------------------------------------SQL database and server start functions--------------------------------------------------
 //adoption route
 app.get("/adoption", function(req, res) {
   res.render('adoption');
 });
+
+//--------------------------------------------------SQL database and server start functions--------------------------------------------------
 
 //use this function to retrieve data from the SQL database
 async function executeSQL(sql, params) {
