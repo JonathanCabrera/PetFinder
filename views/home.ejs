@@ -1,12 +1,19 @@
 <%- include("partials/header.ejs") %>
 
-<p><%= dogs %></p>
+<!-- <p><%= dogs[0].id %></p> -->
 
-<!-- <% dogs.forEach( function(i) { %>
+<% dogs.forEach( function(i) { %>
 
-    <p><%= i.id %></p>
+    <%= console.log(i); %>
+    <p><%= i.id %> - <%= i.name %></p>
 
-<% }) %> -->
+    <% if(i.photos[0] != undefined) { %>
+        <img src="<%= i.photos[0].small %>">
+    <% } %>
+    
+    
+
+<% }) %>
 
 <script src="js/script.js"></script>
 

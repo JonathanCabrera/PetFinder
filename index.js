@@ -72,7 +72,7 @@ async function getAnimals() {
 //--------------------------------------------------Routes--------------------------------------------------
 
 //home route
-app.get('/', async function(req, res) {
+app.get('/', function(req, res) {
   let dogs = [];
 
   getApiAuth();
@@ -85,16 +85,14 @@ app.get('/', async function(req, res) {
     })
     .then(function (response) {
       dogs = [response.data.animals[0], response.data.animals[1], response.data.animals[2]];
-      console.log(dogs);
+      res.render('home', {
+        "dogs": dogs
+      });
     })
     .catch(function (error) {
       console.log(error);
     })
 
-
-  res.render('home', {
-    "dogs": dogs
-  });
 });
 
 //var loginRouter = require('./routes/login');
