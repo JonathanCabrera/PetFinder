@@ -1,6 +1,4 @@
-<%- include("partials/header.ejs") %>
-
-<!-- <p><%= dogs[0].id %></p> -->
+<%- include("partials/header.ejs", authenticated, user) %>
 
 <% dogs.forEach( function(i) { %>
 
@@ -8,7 +6,7 @@
     <p><%= i.id %> - <%= i.name %></p>
 
     <% if(i.photos[0] != undefined) { %>
-        <img src="<%= i.photos[0].small %>">
+        <img src="<%= i.photos[0].medium %>">
     <% } %>
     
     
