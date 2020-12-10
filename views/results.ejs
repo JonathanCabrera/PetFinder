@@ -20,13 +20,13 @@
                                 <% } %>
                             <% } else if(i.type == "Cat") { %> 
                                 <% if(i.primary_photo_cropped != null) { %> 
-                                    <img src="<%= i.primary_photo_cropped.medium %>" width=250px height=250px>
+                                    <img src="<%= i.primary_photo_cropped.medium %>" width=250px height=250px>                               
                                 <% } else { %>
                                     <img src="img/cat.jpg" width=250px height=250px>
                                 <% } %>
                             <% } else if(i.type == "Rabbit") { %> 
                                 <% if(i.primary_photo_cropped != null) { %> 
-                                    <img src="<%= i.primary_photo_cropped.medium %>" width=250px height=250px>
+                                    <img src="<%= i.primary_photo_cropped.medium %>" width=250px height=250px>                                    
                                 <% } else { %>
                                     <img src="img/rabbit.png" width=250px height=250px>
                                 <% } %>
@@ -38,6 +38,10 @@
                                 <p><%= i.type %>, <%= i.breeds.primary %></p>    
                                 <h5>Residence:</h5>
                                 <p><%= i.contact.address.city %>, <%= i.contact.address.state %> <%= i.contact.address.postcode %></p>
+
+                                <% if(authenticated) { %>
+                                    <a href="/savePet?animalId=<%=i.id%>&name=<%=i.name%>&type=<%= i.type %>&breed=<%= i.breeds.primary %>&city=<%= i.contact.address.city %>&state=<%= i.contact.address.state %>&postcode=<%= i.contact.address.postcode %>"> Save to List </a>
+                                <% } %>
 
                             </div>
                         </div>

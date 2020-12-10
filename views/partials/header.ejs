@@ -43,7 +43,7 @@
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
               <% if (authenticated) {%>
-                Welcome, <%= user.username %>
+                Welcome, <%= user.name %>
               <% } else { %>
                 Welcome, Guest
               <% } %>
@@ -51,7 +51,7 @@
             <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
               <% if (authenticated) {%>
                 <a class="dropdown-item" href="/account">My Account</a>
-                <a class="dropdown-item" href="/list?userId=<%= user.userId %>">My Adopted Pets</a>
+                <a class="dropdown-item" href="/list?userId=<%= user.userId %>">Saved Pets</a>
                 <a class="dropdown-item" href="/logout">Log Out</a>
               <% } else { %>
                 <a class="dropdown-item" href="/login">Login</a>

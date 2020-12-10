@@ -1,0 +1,43 @@
+<%- include("partials/header.ejs", authenticated, user) %>
+
+    <div class="pattern pt-4">
+
+        <div class="d-flex justify-content-center">
+            <h5 class="text-center" id='pill_recipe'> Saved Pets </h5>
+        </div>
+
+        <div class="row row-cols-5 mx-auto">
+            <% results.forEach( function(i) { %>
+                <div class="col d-flex justify-content-center ">
+                    <div class="card custom-card" >
+                        <div class="card-body">
+                            <div class="d-flex ">
+                                <% if(i.type == "Dog") { %>  
+                                    <img src="img/dog.png" width=250px height=250px>
+                                <% } else if(i.type == "Cat") { %> 
+                                    <img src="img/cat.jpg" width=250px height=250px>
+                                <% } else if(i.type == "Rabbit") {%> 
+                                    <img src="img/rabbit.png" width=250px height=250px>
+                                <% } %>
+                                <div class="d-flex flex-column justify-content-start ml-3"> 
+                                    <!-- quick info about the animal -->
+                                    <h3 class="card-title mt-4"> <a href="animals/<%= i.animalId %>"><%=i.name%></a> </h3>
+                                    <%= console.log(i); %>
+                                    <p><%= i.type %>, <%= i.breed %></p>    
+                                    <h5>Residence:</h5>
+                                    <p><%= i.city %>, <%= i.state %> <%= i.postcode %></p>
+                                    <a class="removePet" href="/removePet?animalId=<%= i.animalId %>" id="<%= i.animalId %>"> Remove </a>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <% }) %>
+        </div>
+
+    </div>
+
+<script src="js/script.js"></script>
+
+<%- include("partials/footer.ejs") %>

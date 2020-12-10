@@ -20,7 +20,10 @@ app.use(express.urlencoded({extended: true}));
 //store user's info when they log in
 var user = {
   userId: 0,
-  username: ""
+  username: "",
+  name: "",
+  password: ""
+
 };
 
 //function for authenticating user login
@@ -31,7 +34,6 @@ function isAuthenticated(req, res, next) {
     next();
   }
 }
-
 
 //sessions
 app.use(session({
@@ -50,8 +52,6 @@ var accessToken = "";
 
 async function getApiAuth(){
 
-  
-
   axios
     .post('https://api.petfinder.com/v2/oauth2/token', {
       grant_type: "client_credentials",
@@ -60,15 +60,10 @@ async function getApiAuth(){
     })
     .then((res) => {
       console.log(`statusCode: ${res.status}`)
-      //console.log(res.data)
 
       tokenType = res.data.token_type;
       expiresIn = res.data.expires_in;
       accessToken = res.data.access_token;
-
-      //console.log(`token type: ${tokenType}\nexpires in: ${expiresIn}\naccess token: ${accessToken}`);
-
-      //getAnimals();
 
     })
     .catch((error) => {
@@ -77,68 +72,13 @@ async function getApiAuth(){
 
 }
 
-
-
-async function getAnimals() {
-
-  axios
-    .get('https://api.petfinder.com/v2/animals?type=dog', {
-      headers: {
-        Authorization: `Bearer ${accessToken}`
-      }
-    })
-    .then(function (res) {
-      console.log(res.data.animals[0]);
-    })
-    .catch(function (error) {
-      console.log(error);
-    }) 
-}
-
-function getDogs() {
-  let dogs = [];
-
-  getApiAuth();
-
-  axios
-    .get('https://api.petfinder.com/v2/animals?type=dog', {
-      headers: {
-        Authorization: `Bearer ${accessToken}`
-      }
-    })
-    .then(function (response) {
-      let i = 0;
-      while (dogs.length < 3) {
-        if (response.data.animals[i].photos.length > 0) {
-          dogs.push(response.data.animals[i]);
-          //i++;
-        }
-        i++;
-      }
-
-      //dogs = [response.data.animals[0], response.data.animals[1], response.data.animals[2]];
-      console.log(dogs);
-      return dogs;
-      
-      // res.render('home', {
-      //   "dogs": dogs,
-      //   authenticated: req.session.authenticated,
-      //   user: user
-      // });
-    })
-    .catch(function (error) {
-      console.log(error);
-    })
-}
-
-
-
 //--------------------------------------------------Routes--------------------------------------------------
 
 //home route
 app.get('/', function(req, res) {
   getApiAuth();
   let results = [];
+  let photo = "";
   axios
     .get('https://api.petfinder.com/v2/animals?page=2', {
       headers: {
@@ -149,17 +89,12 @@ app.get('/', function(req, res) {
       let i = 0;
       console.log(response.data);
       while (results.length < 10) {
-        // if (response.data.animals[i].photos.length > 0 && response.data.animals[i].primary_photo_cropped != null) {
-        //   results.push(response.data.animals[i]);
-        //   //i++;
-        // }
         results.push(response.data.animals[i]);
         i++;
       }
-
-      
       
       res.render('home', {
+        "photo": photo,
         "results": results,
         authenticated: req.session.authenticated,
         user: user
@@ -168,11 +103,6 @@ app.get('/', function(req, res) {
     .catch(function (error) {
       console.log(error);
     })
-
-  // res.render('home', {
-  //   authenticated: req.session.authenticated,
-  //   user: user
-  // }); 
 });
 
 //login GET route
@@ -211,12 +141,10 @@ app.post('/login', async (req, res) => {
 
     user.userId = rows[0].userId;
     user.username = rows[0].username;
+    user.name = rows[0].name;
+    user.password = rows[0].password;
 
     req.session.authenticated = true;
-    // res.render("home", {
-    //   authenticated: req.session.authenticated,
-    //   user: user
-    // });
 
     res.redirect("/");
     
@@ -224,6 +152,8 @@ app.post('/login', async (req, res) => {
 
     user.userId = 0;
     user.username = "";
+    user.name = "";
+    user.password = "";
 
     res.render("login", {
       error: "Invalid credentials",
@@ -255,8 +185,8 @@ app.get("/register", function(req, res) {
 app.post('/register', async (req, res) => {
   let rowAffected = false;
   if(req.body.username){
-    let sql = "INSERT INTO pf_users (username, password) VALUES (?,?)";
-    let params = [req.body.username, req.body.password];
+    let sql = "INSERT INTO pf_users (username, name, password) VALUES (?,?,?)";
+    let params = [req.body.username, req.body.name, req.body.password];
     var rows = await executeSQL(sql, params);
 
     if (rows.affectedRows == 1) {
@@ -269,6 +199,74 @@ app.post('/register', async (req, res) => {
     authenticated: req.session.authenticated,
     user: user
   });
+});
+
+//account GET route
+app.get("/account", isAuthenticated, async function(req, res) {
+  let sql = "SELECT * FROM pf_users WHERE userId = ?";
+  let params = [user.userId];
+  let rows = await executeSQL(sql, params);
+  console.log(rows);
+
+  res.render('account', {
+    accountUpdated: "",
+    "rows": rows,
+    authenticated: req.session.authenticated,
+    user: user
+  });
+});
+
+//account POST route
+app.post('/account', isAuthenticated, async (req, res) => {
+  let rowAffected = false;
+  if(req.body.name){
+    let sql = "UPDATE pf_users SET name = ?, password = ? WHERE userId = ?";
+    let params = [req.body.name, req.body.password, user.userId];
+    let rows = await executeSQL(sql, params);
+
+    if (rows.affectedRows == 1) {
+      rowAffected = true;
+    }
+  }
+  
+
+  let sql = "SELECT * FROM pf_users WHERE userId = ?";
+  let rows = await executeSQL(sql, [user.userId]);
+  res.render('account', {
+    "rows": rows,
+    accountUpdated: rowAffected,
+    authenticated: req.session.authenticated,
+    user: user
+  });
+});
+
+//user's saved pets route
+app.get('/list', isAuthenticated, async function(req, res) {
+  let sql = "SELECT * FROM pf_cart WHERE userId = ? ORDER BY itemId";
+  let params = [user.userId];
+  let results = await executeSQL(sql, params);
+
+  res.render('list', {
+    "results": results,
+    authenticated: req.session.authenticated,
+    user: user
+  })
+});
+
+//removePet route
+app.get('/removePet', isAuthenticated, async (req, res) => {
+  let sql = "DELETE FROM pf_cart WHERE animalId = ? AND userId = ?";
+  let rows = await executeSQL(sql, [req.query.animalId, user.userId]);
+
+  res.redirect("/list");
+});
+
+//savePet route
+app.get('/savePet', isAuthenticated, async (req, res) => {
+  let sql = "INSERT INTO pf_cart (animalId, name, type, breed, city, state, postcode, userId) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+  let rows = await executeSQL(sql, [req.query.animalId, req.query.name, req.query.type, req.query.breed, req.query.city, req.query.state, req.query.postcode, user.userId]);
+
+  res.redirect("/");
 });
 
 //search route
@@ -286,6 +284,7 @@ app.get("/results", async function(req, res) {
   let params = `https://api.petfinder.com/v2/animals?page=2&`;
   let zipcode = req.query.zipcode;
   let type = req.query.type;
+  let photo = "";
 
   if (req.query.zipcode) { //if zip code was entered
     params += `location=${zipcode}&`;
@@ -309,6 +308,7 @@ app.get("/results", async function(req, res) {
       console.log(results.animals[0]);
 
       res.render('results', {
+        "photo": photo,
         "results": results,
         authenticated: req.session.authenticated,
         user: user
@@ -317,11 +317,6 @@ app.get("/results", async function(req, res) {
     .catch(function (error) {
       console.log(error);
     })
-});
-
-//adoption route
-app.get("/adoption", function(req, res) {
-  res.render('adoption');
 });
 
 //--------------------------------------------------Endpoints--------------------------------------------------
@@ -373,6 +368,9 @@ function dbConnection() {
 
   const pool = mysql.createPool({
     connectionLimit: 1000,
+    connectTimeout  : 60 * 60 * 1000,
+    acquireTimeout  : 60 * 60 * 1000,
+    timeout         : 60 * 60 * 1000,
     host: "wiad5ra41q8129zn.cbetxkdyhwsb.us-east-1.rds.amazonaws.com",
     user: "qf7d0xcoxx04dr6v",
     password: "a0twz7veq2mv2s8a",
