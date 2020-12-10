@@ -1,5 +1,29 @@
-<%- include("partials/header.ejs") %>
+<%- include("partials/header.ejs", authenticated, user) %>
 
-
+<div class="pattern pt-4">
+    <div class="centered">
+        <div class="card mb-5" id="search">
+            <h1 class="card-title mb-2 text-muted">Search Pets</h1>
+        
+            <form action="/results" method="GET">
+        
+                <label class="form-label">Zip Code: </label>
+                <input type="text" name="zipcode" class="input-group-prepend custom-input"> <br>
+        
+                <label class="form-label">Type: </label>
+                <select name="type" class="form-control">
+                    <option value="">Select Type</option>
+                    <option value="Dog">Dogs</option>
+                    <option value="Cat">Cats</option>
+                    <option value="Rabbit">Rabbits</option>
+                </select>
+                <br> 
+                <br> 
+                <button class="btn btn-primary">Search</button>
+        
+            </form>
+        </div>
+    </div>
+</div>
 
 <%- include("partials/footer.ejs") %>

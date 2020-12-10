@@ -1,0 +1,35 @@
+<%- include("partials/header.ejs", authenticated, user) %>
+
+<div class="pattern pt-4">
+    <div class="centered">
+        <div class="card mt-3" id="search">
+            <h1 class="card-title mb-2 text-muted">Account Info</h1>
+            <form method="POST">
+
+                <label class="form-label">Username: </label><br> <%=rows[0].username%>
+                <br><br>
+
+                <label class="form-label">Name: </label><br>
+                <input type="text" name="name" class="input-group-prepend custom-input" value="<%=rows[0].name%>" required><br><br>
+
+                <label class="form-label">Password: </label><br>
+                <input type="password" name="password" class="input-group-prepend custom-input" required><br><br>
+
+                <!-- <label class="form-label">Confirm Password: </label><br>
+                <input type="password" name="confirmPassword" class="input-group-prepend custom-input" required><br><br> -->
+
+                <button class="btn btn-primary" name="formSubmitted"> Update </button>
+
+            </form>
+            <% if(accountUpdated) { %>  
+                <div class="d-flex justify-content-center">
+                    <h5 class="text-center" id='pill_recipe'> Account Updated </h5>
+                </div>
+            <% } %>
+        </div>
+    </div>
+</div>
+
+
+
+<%- include("partials/footer.ejs") %>

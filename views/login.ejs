@@ -1,15 +1,25 @@
 <%- include("partials/header.ejs") %>
 
+<div class="pattern pt-4">
 
+  <form method="POST">
+    <div class="centered">
+      <div class="card mb-5" id="login">
+        <h3 class= "card-subtitle mb-2 text-muted"> Login </h3>
 
-<h2>Login</h2>
-<!-- -->
-<form method="POST" action="/">
-  <h3> Username </h3>
-  <input type="text" id="username" name="username"><br>
-  <h3> Password </h3>
-  <input type="password" id="password" name="password"><br>
-  <input type="submit" value="Submit">
-</form>
+          <label class="form-label">Username: </label>
+            <input type="text" name="username" class="input-group-prepend custom-input" required> <br><br>
+
+          <label class="form-label">Password: </label>
+            <input type="password" name="password" class="input-group-prepend custom-input" required> <br><br>
+
+          <button class="btn btn-primary">Login</button>
+          
+      <%= error %>
+      </div>
+    </div>
+  </form>
+    
+</div>
 
 <%- include("partials/footer.ejs") %>
