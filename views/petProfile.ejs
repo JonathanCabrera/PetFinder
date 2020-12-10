@@ -1,0 +1,43 @@
+  
+<%- include("partials/header.ejs", authenticated, user) %>
+
+<div class="card my-4" style="width: 26rem;">
+    <!-- <img class="card-img-top" src="/img/cat.png" alt="Card image cap"> -->
+    <% if(data.animal.type == "Dog") { %>  
+        <% if(data.animal.primary_photo_cropped != null) { %> 
+            <img class="card-img-top" src="<%= data.animal.primary_photo_cropped.medium %>" alt="Pet Photo">
+        <% } else { %>
+            <img class="card-img-top" src="/img/dog.png" alt="Pet Photo">
+        <% } %>
+    <% } else if(data.animal.type == "Cat") { %> 
+        <% if(data.animal.primary_photo_cropped != null) { %> 
+            <img class="card-img-top" src="<%= data.animal.primary_photo_cropped.medium %>" alt="Pet Photo">
+        <% } else { %>
+            <img class="card-img-top" src="/img/cat.jpg" alt="Pet Photo">
+        <% } %>
+    <% } else if(data.animal.type == "Rabbit") { %> 
+        <% if(data.animal.primary_photo_cropped != null) { %> 
+            <img src="<%= data.animal.primary_photo_cropped.medium %>" alt="Pet Photo">
+        <% } else { %>
+            <img src="img/rabbit.png" alt="Pet Photo">
+        <% } %>
+    <% } %>%> 
+    
+    <div class="card-body">
+        <!-- detailed info about the animal -->
+        <h2 class="card-title mt-4"><%=data.animal.name%></h2>
+        <hr>
+            <p><%= data.animal.type %>, <%= data.animal.breeds.primary %></p>  
+            <p>Gender: <%= data.animal.gender %></p>
+            <p>Age: <%= data.animal.age %></p>
+            <p><%= data.animal.description %></p>
+            <a href="<%= data.animal.url %>">Click here for more info!</a>  
+        <hr>
+        <h5>Residence and Contact:</h5>
+            <p><%= data.animal.contact.address.city %>, <%= data.animal.contact.address.state %> <%= data.animal.contact.address.postcode %></p>
+            <p> Email: <%= data.animal.contact.email %></p>
+            <p> Tel: <%= data.animal.contact.phone %></p>
+    </div>
+</div>
+
+<%- include("partials/footer.ejs") %>
