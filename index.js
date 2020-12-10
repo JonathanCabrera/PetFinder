@@ -4,6 +4,8 @@ const mysql = require('mysql');
 const fetch = require("node-fetch");
 const https = require('https');
 const axios = require('axios').default;
+const petfinder = require("@petfinder/petfinder-js");
+const client = new petfinder.Client({apiKey: "xGuOIWMLc2BR0zFXcMSdMoLPe5dko8hdHm7ncHJqmcVuBA7iHx", secret: "1ix8XcU6Ih4GLPwJCRWrVAKCJ2Fu68pyFIbLctvR"});
 const session = require('express-session');
 const pool = dbConnection();
 //const querystring = require('querystring');
@@ -135,32 +137,30 @@ function getDogs() {
 
 //home route
 app.get('/', function(req, res) {
-  let dogs = [];
-
   getApiAuth();
-
+  let results = [];
   axios
-    .get('https://api.petfinder.com/v2/animals?type=dog', {
+    .get('https://api.petfinder.com/v2/animals?page=2', {
       headers: {
         Authorization: `Bearer ${accessToken}`
       }
     })
     .then(function (response) {
       let i = 0;
-      while (dogs.length < 3) {
-        if (response.data.animals[i].photos.length > 0) {
-          dogs.push(response.data.animals[i]);
-          //i++;
-        }
+      console.log(response.data);
+      while (results.length < 10) {
+        // if (response.data.animals[i].photos.length > 0 && response.data.animals[i].primary_photo_cropped != null) {
+        //   results.push(response.data.animals[i]);
+        //   //i++;
+        // }
+        results.push(response.data.animals[i]);
         i++;
       }
 
-      //dogs = [response.data.animals[0], response.data.animals[1], response.data.animals[2]];
-      //console.log(dogs);
-      //return dogs;
+      
       
       res.render('home', {
-        "dogs": dogs,
+        "results": results,
         authenticated: req.session.authenticated,
         user: user
       });
@@ -168,6 +168,11 @@ app.get('/', function(req, res) {
     .catch(function (error) {
       console.log(error);
     })
+
+  // res.render('home', {
+  //   authenticated: req.session.authenticated,
+  //   user: user
+  // }); 
 });
 
 //login GET route
@@ -267,14 +272,87 @@ app.post('/register', async (req, res) => {
 });
 
 //search route
-app.get("/search", function(req, res) {
-  res.render('results');
+app.get("/search", async function(req, res) {
+  
+  res.render('search', {
+    authenticated: req.session.authenticated,
+    user: user
+  })
+});
+
+//results route
+app.get("/results", async function(req, res) {
+
+  let params = `https://api.petfinder.com/v2/animals?page=2&`;
+  let zipcode = req.query.zipcode;
+  let type = req.query.type;
+
+  if (req.query.zipcode) { //if zip code was entered
+    params += `location=${zipcode}&`;
+  }
+
+  if (req.query.type) { //if type was selected
+    params += `type=${type}&`;
+    //params.push(req.query.time);
+  }
+
+  axios
+    .get(params, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`
+      }
+    })
+    .then(function (response) {
+      let results = response.data;
+      console.log(response.data);
+
+      console.log(results.animals[0]);
+
+      res.render('results', {
+        "results": results,
+        authenticated: req.session.authenticated,
+        user: user
+      });
+    })
+    .catch(function (error) {
+      console.log(error);
+    })
 });
 
 //adoption route
 app.get("/adoption", function(req, res) {
   res.render('adoption');
 });
+
+//--------------------------------------------------Endpoints--------------------------------------------------
+
+app.get('/animals/:animalId', async (req, res) => {
+  const animalId = req.params.animalId;
+
+  getApiAuth();
+
+  axios
+    .get(`https://api.petfinder.com/v2/animals/${animalId}`, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`
+      }
+    })
+    .then(function (response) {
+      let data = response.data;
+      console.log(response.data);
+
+      res.render('petProfile', {
+        "data": data,
+        authenticated: req.session.authenticated,
+        user: user
+      });
+      
+    })
+    .catch(function (error) {
+      console.log(error);
+    })
+    
+})
 
 //--------------------------------------------------SQL database and server start functions--------------------------------------------------
 
@@ -308,3 +386,74 @@ function dbConnection() {
 app.listen(3000, () => {
   console.log('server started');
 });
+
+
+
+
+
+
+
+
+
+
+
+//--------------------------------------------------Old Code--------------------------------------------------
+
+//let dogs = [];
+
+  // getApiAuth();
+
+  // axios
+  //   .get('https://api.petfinder.com/v2/animals', {
+  //     headers: {
+  //       Authorization: `Bearer ${accessToken}`
+  //     }
+  //   })
+  //   .then(function (response) {
+  //     let i = 0;
+  //     console.log(response.data);
+  //     while (dogs.length < 4) {
+  //       if (response.data.animals[i].photos.length > 0) {
+  //         dogs.push(response.data.animals[i]);
+  //         //i++;
+  //       }
+  //       i++;
+  //     }
+
+      
+      
+  //     res.render('home', {
+  //       "dogs": dogs,
+  //       authenticated: req.session.authenticated,
+  //       user: user
+  //     });
+  //   })
+  //   .catch(function (error) {
+  //     console.log(error);
+  //   })
+
+
+  // client.animal.search()
+  // .then(resp => {
+  //   //console.log(resp.data);
+
+  //   let i = 0;
+  //   while (dogs.length < 8) {
+  //     if (resp.data.animals[i] != undefined && resp.data.animals[i].primary_photo_cropped != null) {
+  //       dogs.push(resp.data.animals[i]);
+  //       //console.log(resp.data.animals[i]);
+  //       //i++;
+  //     }
+  //     i++;
+  //   }
+  //   console.log(dogs);
+
+  //   res.render('home', {
+  //     "dogs": dogs,
+  //     authenticated: req.session.authenticated,
+  //     user: user
+  //   });
+  // })
+  // .catch(function (error) {
+  //   console.log(error);
+  // })
