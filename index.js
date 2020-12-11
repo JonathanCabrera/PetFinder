@@ -298,15 +298,15 @@ app.get("/results", async function(req, res) {
     params += `&type=${type}`;
     //params.push(req.query.time);
   }
-    if (req.query.size) { //if type was selected
+    if (req.query.size) { //if size was selected
     params += `&size=${size}`;
     //params.push(req.query.time);
   }
-    if (req.query.gender) { //if type was selected
+    if (req.query.gender) { //if gender was selected
     params += `&gender=${gender}`;
     //params.push(req.query.time);
   }
-    if (req.query.age) { //if type was selected
+    if (req.query.age) { //if age was selected
     params += `&age=${age}`;
     //params.push(req.query.time);
   }
