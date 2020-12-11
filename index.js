@@ -291,23 +291,23 @@ app.get("/results", async function(req, res) {
   let photo = "";
 
   if (req.query.zipcode) { //if zip code was entered
-    params += `location=${zipcode}&`;
+    params += `location=${zipcode}`;
   }
   
   if (req.query.type) { //if type was selected
-    params += `type=${type}&`;
+    params += `&type=${type}`;
     //params.push(req.query.time);
   }
     if (req.query.size) { //if type was selected
-    params += `size=${size}&`;
+    params += `&size=${size}`;
     //params.push(req.query.time);
   }
     if (req.query.gender) { //if type was selected
-    params += `gender=${gender}&`;
+    params += `&gender=${gender}`;
     //params.push(req.query.time);
   }
     if (req.query.age) { //if type was selected
-    params += `age=${age}&`;
+    params += `&age=${age}`;
     //params.push(req.query.time);
   }
   

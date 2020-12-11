@@ -5,50 +5,41 @@
     <div class="d-flex justify-content-center">
         <h5 class="text-center" id='pill_recipe'> Search Results </h5>
     </div>
-
-    <div class="row row-cols-5 mx-auto">
-        <% results.animals.forEach( function(i) { %>
-            <div class="col d-flex justify-content-center ">
-                <div class="card custom-card" >
-                    <div class="card-body">
-                        <div class="d-flex ">
-                            <% if(i.type == "Dog") { %>  
-                                <% if(i.primary_photo_cropped != null) { %> 
-                                    <img src="<%= i.primary_photo_cropped.medium %>" width=250px height=250px>
-                                <% } else { %>
-                                    <img src="img/dog.png" width=250px height=250px>
-                                <% } %>
-                            <% } else if(i.type == "Cat") { %> 
-                                <% if(i.primary_photo_cropped != null) { %> 
-                                    <img src="<%= i.primary_photo_cropped.medium %>" width=250px height=250px>                               
-                                <% } else { %>
-                                    <img src="img/cat.jpg" width=250px height=250px>
-                                <% } %>
-                            <% } else if(i.type == "Rabbit") { %> 
-                                <% if(i.primary_photo_cropped != null) { %> 
-                                    <img src="<%= i.primary_photo_cropped.medium %>" width=250px height=250px>                                    
-                                <% } else { %>
-                                    <img src="img/rabbit.png" width=250px height=250px>
-                                <% } %>
-                            <% } %>
-                            <div class="d-flex flex-column justify-content-start ml-3"> 
-                                <!-- quick info about the animal -->
-                                <h3 class="card-title mt-4"> <a href="animals/<%= i.id %>"><%=i.name%></a> </h3>
-                                <%= console.log(i); %>
-                                <p><%= i.type %>, <%= i.breeds.primary %></p>    
-                                <h5>Residence:</h5>
-                                <p><%= i.contact.address.city %>, <%= i.contact.address.state %> <%= i.contact.address.postcode %></p>
-                                <% if(authenticated) { %>
-                                    <a href="/savePet?animalId=<%=i.id%>&name=<%=i.name%>&type=<%= i.type %>&breed=<%= i.breeds.primary %>&city=<%= i.contact.address.city %>&state=<%= i.contact.address.state %>&postcode=<%= i.contact.address.postcode %>"> Save to List </a>
-                                <% } %>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+     <% results.animals.forEach( function(i) { %>
+    <div class="gallery">
+        
+        <figure> 
+            <% if(i.photos==null){%>
+            <img src="img/no_img.jpg">
+             <% } %>
+            <% if(i.type == "Dog") { %>  
+            <% if(i.primary_photo_cropped != null) { %> 
+            <img src="<%= i.primary_photo_cropped.medium %>" width=200px height=200px>
+            <% } else { %>
+            <img src="img/dog.png" width=200px height=200px>
+            <% } %>
+            <% } else if(i.type == "Cat") { %> 
+            <% if(i.primary_photo_cropped != null) { %> 
+            <img src="<%= i.primary_photo_cropped.medium %>" width=200px height=200px>                                 
+            <% } else { %>
+            <img src="img/cat.jpg" width=2px height=200px>
+            <% } %>
+            <% } %> 
+            <figcaption>
+                <h3 class="card-title mt-4"> <a href="animals/<%= i.id %>"><%=i.name%></a> </h3>
+                <%= console.log(i); %>
+                <p><%= i.type %>, <%= i.breeds.primary %></p>    
+                <h5>Residence:</h5>
+                <p><%= i.contact.address.city %>, <%= i.contact.address.state %> <%= i.contact.address.postcode %></p>
+                
+                <% if(authenticated) { %>
+                    <a href="/savePet?animalId=<%=i.id%>&name=<%=i.name%>&type=<%= i.type %>&breed=<%= i.breeds.primary %>&city=<%= i.contact.address.city %>&state=<%= i.contact.address.state %>&postcode=<%= i.contact.address.postcode %>"> Save to List </a>
+                <% } %>
+            </figcaption> 
+        </figure> 
         <% }) %>
     </div>
 
-</div>
+<script src="js/script.js"></script>
 
 <%- include("partials/footer.ejs") %>
